@@ -17,8 +17,12 @@ target_include_directories(KittyMemoryEx PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Kitt
 # 4. 编译宏定义
 target_compile_definitions(KittyMemoryEx PRIVATE $<$<BOOL:${KT_DISABLE_KEYSTONE}>:kNO_KEYSTONE>)
 
-# 5. 编译选项（不加 -Werror 防止因微小警告中断编译）
+# 5. 编译选项（★ 新增体积优化参数 ★）
 target_compile_options(KittyMemoryEx PRIVATE
+    -Os                     # ★ 关键：优先优化体积，替代 -O2
+    -ffunction-sections     # ★ 每个函数单独放一个段
+    -fdata-sections         # ★ 每个数据单独放一个段
+    -fvisibility=hidden     # ★ 隐藏不需要暴露的符号
     -Wall
     -Wextra
     -fexceptions
