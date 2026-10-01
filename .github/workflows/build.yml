@@ -34,7 +34,11 @@ jobs:
         mkdir -p output/include
         # 1. 拷贝所有头文件（以后调用需要用到）
         cp KittyMemoryEx/*.hpp output/include/
-        # 2. 精确找到我们刚才生成的 libKittyMemoryEx.a
+        
+        # 2. ★ 关键：用 NDK 自带的 llvm-strip 剥离符号表，大幅减小体积
+        find build -name "libKittyMemoryEx.a" -exec $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip --strip-unneeded {} \;
+        
+        # 3. 拷贝已经瘦身后的静态库
         find build -name "libKittyMemoryEx.a" -exec cp {} output/ \;
 
     - name: Upload Artifact
