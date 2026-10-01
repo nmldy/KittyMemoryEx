@@ -3,9 +3,7 @@ name: Build Android C++ Project
 on:
   push:
     branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
-  workflow_dispatch:  # 允许你在网页上手动点击按钮编译
+  workflow_dispatch:
 
 jobs:
   build:
@@ -15,19 +13,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # 克隆 KittyMemoryEx 到上一级目录，匹配你 CMakeLists 里的 "../KittyMemoryEx"
-    - name: Clone KittyMemoryEx
-      run: |
-        git clone --depth 1 https://github.com/MJx0/KittyMemoryEx.git ../KittyMemoryEx
-
-    # 设置 NDK 环境 (使用 r26b 版本，完美支持 C++20)
     - name: Setup Android NDK
       uses: nttld/setup-ndk@v1
       with:
         ndk-version: r26b
         add-to-path: true
 
-    # 配置 CMake
     - name: Configure CMake
       run: |
         cmake -B build \
@@ -37,11 +28,9 @@ jobs:
           -DKT_DISABLE_KEYSTONE=ON \
           -DCMAKE_BUILD_TYPE=Release
 
-    # 编译项目
     - name: Build Project
       run: cmake --build build --config Release -j $(nproc)
 
-    # 把编译好的文件上传，供你下载
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
